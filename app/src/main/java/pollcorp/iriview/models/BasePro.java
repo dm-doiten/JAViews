@@ -79,6 +79,6 @@ public class BasePro {
 	}
 
 	public String toString(){
-		return this.objectId + " " + this.name + " " + this.score;
+		return this.objectId + " " + this.name;
 	}
 }

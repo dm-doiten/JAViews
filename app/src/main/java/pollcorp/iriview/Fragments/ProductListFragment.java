@@ -68,12 +68,6 @@ public class ProductListFragment extends Fragment implements AbsListView.OnItemC
 	private ProductAdapter adapter;
 	private List<Product> products;
 
-	/**
-	 * The Adapter which will be used to populate the ListView/GridView with
-	 * Views.
-	 */
-	private ListAdapter mAdapter;
-
 	// TODO: Rename and change types of parameters
 	public static ProductListFragment newInstance(String param1, String param2) {
 		ProductListFragment fragment = new ProductListFragment();
@@ -99,10 +93,7 @@ public class ProductListFragment extends Fragment implements AbsListView.OnItemC
 			mParam1 = getArguments().getString(ARG_PARAM1);
 			mParam2 = getArguments().getString(ARG_PARAM2);
 		}
-		//Init fake data.
 		products = new ArrayList<Product>();
-		//String testLink2 = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmh5oGqMgI3c4h3ggYysE7JNX590clSNJtPS0wpYzDX7o6_6U0";
-		//String testLink = "http://image2.tin247.com/pictures/picsmall/2013/12/22/150/uly1387646449.jpg";
 		//Init adapter.
 		adapter = new ProductAdapter(getActivity().getApplicationContext(), products);
 	}
@@ -129,7 +120,7 @@ public class ProductListFragment extends Fragment implements AbsListView.OnItemC
 								products.add(product);
 							}
 							Log.e(TAG, products.toString());
-							adapter.notifyDataSetChanged();
+							adapter.pull(products);
 						} catch (JSONException e) {
 							e.printStackTrace();
 						}
@@ -227,7 +218,8 @@ public class ProductListFragment extends Fragment implements AbsListView.OnItemC
 		if (null != mListener) {
 			// Notify the active callbacks interface (the activity, if the
 			// fragment is attached to one) that an item has been selected.
-			mListener.onProductListFragmentInteraction(products.get(position).getObjectId(), products.get(position).getName());
+			Activity act = (HomeActivity) getActivity();
+			mListener.onProductListFragmentInteraction(adapter.getFilterList().get(position).getObjectId(), adapter.getFilterList().get(position).getName());
 		}
 	}
 
@@ -244,6 +236,10 @@ public class ProductListFragment extends Fragment implements AbsListView.OnItemC
 		}
 	}
 
+	public void filter(String text) {
+		adapter.getFilter().filter(text);
+	}
+
 	/**
 	 * This interface must be implemented by activities that contain this
 	 * fragment to allow an interaction in this fragment to be communicated
@@ -257,25 +253,6 @@ public class ProductListFragment extends Fragment implements AbsListView.OnItemC
 	public interface OnProductListFragmentInteractionListener {
 		// TODO: Update argument type and name
 		public void onProductListFragmentInteraction(String id, String name);
-	}
-
-	private class GetProductTask extends AsyncTask<String, Void, Void> {
-
-		@Override
-		protected Void doInBackground(String... link) {
-			try {
-				Thread.sleep(2000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			return null;
-		}
-
-		@Override
-		protected void onPostExecute(Void aVoid) {
-			super.onPostExecute(aVoid);
-			//TODO update adapter.
-			mSwipeRefreshLayout.setRefreshing(false);
-		}
+//		public void closeSearchView();
 	}
 }

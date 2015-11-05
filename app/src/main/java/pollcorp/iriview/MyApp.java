@@ -13,6 +13,7 @@ import org.json.JSONObject;
 
 import java.util.List;
 
+import pollcorp.iriview.Fragments.HomeActivity;
 import pollcorp.iriview.models.Product;
 
 /**

@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.SearchView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import pollcorp.iriview.MyApp;
@@ -24,7 +26,7 @@ import pollcorp.iriview.R;
 
 
 public class HomeActivity extends ActionBarActivity
-		implements NavigationDrawerFragment.NavigationDrawerCallbacks, ProductListFragment.OnProductListFragmentInteractionListener, BookmarkFragment.OnBookmarkFragmentInteractionListener {
+		implements NavigationDrawerFragment.NavigationDrawerCallbacks, ProductListFragment.OnProductListFragmentInteractionListener, BookmarkFragment.OnBookmarkFragmentInteractionListener, SearchView.OnQueryTextListener {
 
 	/**
 	 * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -35,6 +37,8 @@ public class HomeActivity extends ActionBarActivity
 	 * Used to store the last screen title. For use in {@link #restoreActionBar()}.
 	 */
 	private CharSequence mTitle;
+	private ProductListFragment fragment1;
+	private SearchView searchView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +46,7 @@ public class HomeActivity extends ActionBarActivity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_home);
 
-
+		setupActionbar();
 		mNavigationDrawerFragment = (NavigationDrawerFragment)
 				getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
 		mTitle = getTitle();
@@ -63,7 +67,8 @@ public class HomeActivity extends ActionBarActivity
 
 		switch (position) {
 			case 0: //Home screen
-				ProductListFragment fragment1 = ProductListFragment.newInstance("1", "2");
+				if (fragment1 == null)
+					fragment1 = ProductListFragment.newInstance("1", "2");
 				fragmentManager.beginTransaction()
 						.replace(R.id.container, fragment1)
 						.commit();
@@ -116,10 +121,13 @@ public class HomeActivity extends ActionBarActivity
 
 			// Associate searchable configuration with the SearchView
 			SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-			SearchView searchView = (SearchView) menu.findItem(R.id.action_search)
+			searchView = (SearchView) menu.findItem(R.id.action_search)
 					.getActionView();
 			searchView.setSearchableInfo(searchManager
 					.getSearchableInfo(getComponentName()));
+
+			searchView.setSubmitButtonEnabled(true);
+			searchView.setOnQueryTextListener(this);
 			return true;
 		}
 		return super.onCreateOptionsMenu(menu);
@@ -155,6 +163,22 @@ public class HomeActivity extends ActionBarActivity
 	@Override
 	public void onBookmarkFragmentInteraction(String id) {
 		return;
+	}
+
+	@Override
+	public boolean onQueryTextSubmit(String s) {
+		Log.e(getClass().getSimpleName(), "Submitted:" + s);
+		return false;
+	}
+
+	@Override
+	public boolean onQueryTextChange(String s) {
+		//TODO: Call filter in ProductListFragment
+		if (fragment1 == null)
+			fragment1 = ProductListFragment.newInstance("1", "2");
+		fragment1.filter(s);
+		Log.e(getClass().getSimpleName(), "Changed:" + s);
+		return true;
 	}
 
 	/**
@@ -196,5 +220,10 @@ public class HomeActivity extends ActionBarActivity
 					getArguments().getInt(ARG_SECTION_NUMBER));
 		}
 	}
-
+	public void setupActionbar(){
+		int titleId = getResources().getIdentifier("action_bar_title", "id", "android");
+		TextView abTitle = (TextView) findViewById(titleId);
+		if (abTitle != null)
+			abTitle.setTextColor(getResources().getColor(R.color.header_text));
+	}
 }
