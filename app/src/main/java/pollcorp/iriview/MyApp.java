@@ -11,6 +11,7 @@ import com.android.volley.toolbox.Volley;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import pollcorp.iriview.Fragments.HomeActivity;
@@ -79,6 +80,8 @@ public class MyApp extends Application {
 	}
 
 	public List<Product> getProducts() {
+		if (products == null)
+			products = new ArrayList<Product>();
 		return this.products;
 	}
 
@@ -91,7 +94,7 @@ public class MyApp extends Application {
 	public String getCurrentObjectId(){
 
 		//return curObjectId;
-		return "TbLN0m3W24";
+		return "LIXxAEzwng";
 	}
 	public void setCurrentObjectId(String objectId){
 		curObjectId = objectId;

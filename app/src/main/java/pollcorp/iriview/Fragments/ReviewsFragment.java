@@ -32,6 +32,7 @@ import pollcorp.iriview.R;
 import pollcorp.iriview.Fragments.dummy.DummyContent;
 import pollcorp.iriview.adapters.ProConAdapter;
 import pollcorp.iriview.models.ProsCons;
+import pollcorp.iriview.models.RoundImage;
 
 /**
  * A fragment representing a list of Items.
@@ -61,7 +62,8 @@ public class ReviewsFragment extends Fragment implements AbsListView.OnItemClick
 	 */
 	private ListView mListView;
 	private ProConAdapter adapter;
-
+	private TextView tvHeadline;
+	private TextView tvOveralScore;
 
 	/**
 	 * The Adapter which will be used to populate the ListView/GridView with
@@ -99,8 +101,6 @@ public class ReviewsFragment extends Fragment implements AbsListView.OnItemClick
 			mParam1 = getArguments().getString(ARG_PARAM1);
 			mParam2 = getArguments().getString(ARG_PARAM2);
 		}
-
-		// TODO: Change Adapter to display your content
 		list = new ArrayList<ProsCons>();
 		adapter = new ProConAdapter(getActivity(), list);
 	}
@@ -109,21 +109,19 @@ public class ReviewsFragment extends Fragment implements AbsListView.OnItemClick
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 	                         Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_reviews, container, false);
-
-		// Set the adapter
 		mListView = (ListView) view.findViewById(android.R.id.list);
-		((AdapterView<ListAdapter>) mListView).setAdapter(adapter);
-
-		// Set OnItemClickListener so we can be notified on item clicks
-		mListView.setOnItemClickListener(this);
 		// inflate custom header and attach it to the list
 		ViewGroup header = (ViewGroup) inflater.inflate(R.layout.parallax_header, mListView, false);
+		tvHeadline = (TextView) header.findViewById(R.id.tv_headline);
+		tvOveralScore = (TextView) header.findViewById(R.id.overal_score);
 		mListView.addHeaderView(header, null, false);
-
+		// Set the adapter
+		((AdapterView<ListAdapter>) mListView).setAdapter(adapter);
+		// Set OnItemClickListener so we can be notified on item clicks
+		mListView.setOnItemClickListener(this);
 		// we take the background image and button reference from the header
 		backgroundImage = (ImageView) header.findViewById(R.id.listHeaderImage);
 		mListView.setOnScrollListener(this);
-
 		// Get the NetworkImageView that will display the image.
 		mNetworkImageView = (NetworkImageView) header.findViewById(R.id.listHeaderImage);
 		notifyDataChanged();
@@ -202,15 +200,21 @@ public class ReviewsFragment extends Fragment implements AbsListView.OnItemClick
 		if (jsonObject == null)
 			return;
 		try {
+			String headlineText = jsonObject.getString("headline");
+			String overalScore = jsonObject.getString("score");
+			if (headlineText != null)
+				tvHeadline.setText(headlineText);
+			if (overalScore != null)
+				tvOveralScore.setText(overalScore);
 			IMAGE_URL = jsonObject.getString("image");
-			JSONArray jsonCons = jsonObject.getJSONArray("cons");
 			JSONArray jsonPros = jsonObject.getJSONArray("pros");
+			JSONArray jsonCons = jsonObject.getJSONArray("cons");
 			list = new ArrayList<ProsCons>();
-			for (int i = 0; i < jsonCons.length(); i++) {
-				list.add(new ProsCons(jsonCons.getString(i) , true));
-			}
 			for (int i = 0; i < jsonPros.length(); i++) {
 				list.add(new ProsCons(jsonPros.getString(i), false));
+			}
+			for (int i = 0; i < jsonCons.length(); i++) {
+				list.add(new ProsCons(jsonCons.getString(i) , true));
 			}
 			adapter = new ProConAdapter(getActivity(), list);
 			mListView.setAdapter(adapter);

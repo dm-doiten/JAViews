@@ -55,9 +55,9 @@ public class HomeActivity extends ActionBarActivity
 		mNavigationDrawerFragment.setUp(
 				R.id.navigation_drawer,
 				(DrawerLayout) findViewById(R.id.drawer_layout));
-		FragmentManager fragmentManager = getSupportFragmentManager();
-		ProductListFragment fragment = ProductListFragment.newInstance("1", "2");
-		fragmentManager.beginTransaction().replace(R.id.container, fragment).commit();
+		//FragmentManager fragmentManager = getSupportFragmentManager();
+		//ProductListFragment fragment = ProductListFragment.newInstance("1", "2");
+		//fragmentManager.beginTransaction().replace(R.id.container, fragment).commit();
 	}
 
 	@Override
@@ -173,7 +173,6 @@ public class HomeActivity extends ActionBarActivity
 
 	@Override
 	public boolean onQueryTextChange(String s) {
-		//TODO: Call filter in ProductListFragment
 		if (fragment1 == null)
 			fragment1 = ProductListFragment.newInstance("1", "2");
 		fragment1.filter(s);

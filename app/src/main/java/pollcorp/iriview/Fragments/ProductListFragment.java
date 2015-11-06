@@ -22,6 +22,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -67,6 +68,8 @@ public class ProductListFragment extends Fragment implements AbsListView.OnItemC
 	private ListView mListView;
 	private ProductAdapter adapter;
 	private List<Product> products;
+	private int loadedPage = 0;
+	private int preLast;
 
 	// TODO: Rename and change types of parameters
 	public static ProductListFragment newInstance(String param1, String param2) {
@@ -93,51 +96,69 @@ public class ProductListFragment extends Fragment implements AbsListView.OnItemC
 			mParam1 = getArguments().getString(ARG_PARAM1);
 			mParam2 = getArguments().getString(ARG_PARAM2);
 		}
-		products = new ArrayList<Product>();
+		products = MyApp.getInstance().getProducts();
 		//Init adapter.
 		adapter = new ProductAdapter(getActivity().getApplicationContext(), products);
 	}
 
-	private void getListProduct() {
+	private void loadMorePage() {
+		getProductList(loadedPage + 1);
+	}
+
+	private void getProductList(final int page) {
 		String url = RConstant.url_latest_devices;
 		final String TAG = getClass().getSimpleName();
 		//Connect to url.
-		mSwipeRefreshLayout.setRefreshing(true);
-		JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
-				url, null,
-				new Response.Listener<JSONObject>() {
-
-					@Override
-					public void onResponse(JSONObject response) {
-						Log.e(TAG, response.toString());
-						mSwipeRefreshLayout.setRefreshing(false);
-						try {
-							products.clear();
-							JSONArray arr = response.getJSONArray("result");
-							for (int i = 0; i < arr.length(); i++) {
-								JSONObject obj = arr.getJSONObject(i);
-								Product product = new Product(obj);
-								products.add(product);
-							}
-							Log.e(TAG, products.toString());
-							adapter.pull(products);
-						} catch (JSONException e) {
-							e.printStackTrace();
-						}
+		mSwipeRefreshLayout.post(new Runnable() {
+			@Override
+			public void run() {
+				mSwipeRefreshLayout.setRefreshing(true);
+			}
+		});
+		StringRequest jsonObjReq = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+			@Override
+			public void onResponse(String response) {
+				Log.e(TAG, response.toString());
+				mSwipeRefreshLayout.setRefreshing(false);
+				try {
+					JSONObject jsonObj = new JSONObject(response);
+					if (page == 0)
+						products.clear();
+					JSONArray arr = jsonObj.getJSONArray("result");
+					for (int i = 0; i < arr.length(); i++) {
+						JSONObject obj = arr.getJSONObject(i);
+						Product product = new Product(obj);
+						products.add(product);
 					}
-				}, new Response.ErrorListener() {
+					Log.e(TAG, products.toString());
+					adapter.pull(products);
+					loadedPage = loadedPage + 1;
+					MyApp.getInstance().setProducts(products);
+				} catch (JSONException e) {
+					Log.d(TAG, "Can not parse responded json.");
+					e.printStackTrace();
+				}
+			}
+		}, new Response.ErrorListener() {
 			@Override
 			public void onErrorResponse(VolleyError error) {
-				VolleyLog.d(TAG, "Error: " + error.getMessage());
+				Log.d(TAG, error.toString());
 				mSwipeRefreshLayout.setRefreshing(false);
 			}
-		}
-		) {
-			//Passing some request headers
+		}) {
+			@Override
+			protected Map<String, String> getParams() {
+				Map<String, String> params = new HashMap<String, String>();
+				params.put("Content-Type", "application/x-www-form-urlencoded");
+				params.put("page", page + "");
+				Log.d(TAG, params.toString());
+				return params;
+			}
+
 			@Override
 			public Map<String, String> getHeaders() throws AuthFailureError {
-				HashMap<String, String> headers = new HashMap<String, String>();
-				//headers.put("Content-Type", "application/json");
+				Map<String, String> headers = new HashMap<String, String>();
+				headers.put("Content-Type", "application/x-www-form-urlencoded");
 				headers.put(RConstant.parse_app_id_key, RConstant.parse_app_id_val);
 				headers.put(RConstant.parse_api_id_key, RConstant.parse_api_id_val);
 				Log.d(TAG, headers.toString());
@@ -156,12 +177,11 @@ public class ProductListFragment extends Fragment implements AbsListView.OnItemC
 		mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
 			@Override
 			public void onRefresh() {
-				getListProduct();
-//				String link = "";
-//				GetProductTask task = (GetProductTask) new GetProductTask().execute(link);
+				getProductList(0);//Load the first page
 			}
 		});
-		getListProduct();
+		if (products.isEmpty() || products == null)
+			getProductList(0);//Load the first page
 		// Set the adapter
 		mListView = (ListView) view.findViewById(android.R.id.list);
 		mListView.setDivider(null);
@@ -189,6 +209,15 @@ public class ProductListFragment extends Fragment implements AbsListView.OnItemC
 						((ActionBarActivity) getActivity()).getSupportActionBar().show();
 					}
 					mLastFirstVisibleItem = currentFirstVisibleItem;
+					// Sample calculation to determine if the last item is fully visible.
+					final int lastItem = firstVisibleItem + visibleItemCount;
+					if (lastItem == products.size()) {
+						if (preLast != lastItem) { //to avoid multiple calls for last item
+							Log.d("Last", "Last");
+							preLast = lastItem;
+							loadMorePage();
+						}
+					}
 				}
 			}
 		});

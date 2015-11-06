@@ -59,9 +59,9 @@ public class ProConAdapter extends BaseAdapter {
 		// fill data
 		ViewHolder holder = (ViewHolder) view.getTag();
 		if (spec.isCons())
-			holder.thumbnail.setImageResource(R.drawable.plus);
-		else
 			holder.thumbnail.setImageResource(R.drawable.minus);
+		else
+			holder.thumbnail.setImageResource(R.drawable.plus);
 		holder.val.setText(spec.getName());
 
 		return view;

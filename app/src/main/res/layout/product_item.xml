@@ -17,7 +17,7 @@
         android:layout_width="120dp"
         android:layout_height="70dip"
         android:adjustViewBounds="true"
-        android:src="@drawable/abc_ic_ab_back_mtrl_am_alpha"
+        android:src="@drawable/cellphones"
         android:scaleType="centerInside"/>
 
     <TextView
