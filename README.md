@@ -1,2 +1,2 @@
 # JAViews
-abc
+Review all high-end technology devices.
