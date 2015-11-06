@@ -25,20 +25,17 @@ import pollcorp.iriview.R;
 /**
  * Created by hetpin on 10/21/15.
  */
-public class ProductAdapter extends ArrayAdapter<Product> implements Filterable {
+public class ProductAdapter extends BaseAdapter implements Filterable {
 	private Context context;
 	private FriendFilter friendFilter;
 	private List<Product> filterList;
 	private List<Product> list;//original data.
 
 	public ProductAdapter(Context context, List<Product> products) {
-		super(context, R.layout.product_item, products);
 		this.context = context;
-//		this.filterList = products;//Link to products
-//		this.list = products;
-		this.list = new ArrayList<Product>();//Just copy for backup original data
+		this.list = new ArrayList<Product>();
 		this.list.addAll(products);
-		this.filterList = new ArrayList<Product>();//Just copy for backup original data
+		this.filterList = new ArrayList<Product>();
 		this.filterList.addAll(list);
 		Log.e("Constructor", "list.size =  " +list.size());
 		Log.e("Constructor", "filter.size =  " + filterList.size());
@@ -46,9 +43,7 @@ public class ProductAdapter extends ArrayAdapter<Product> implements Filterable 
 		getFilter();
 	}
 	public void pull(List<Product> newData) {
-//		this.list = new ArrayList<Product>();
-//		this.list.addAll(filterList);
-		this.list = new ArrayList<Product>();//Just copy for backup original data
+		this.list = new ArrayList<Product>();
 		this.list.addAll(newData);
 		this.filterList = new ArrayList<Product>();//Just copy for backup original data
 		this.filterList.addAll(list);
@@ -154,10 +149,6 @@ public class ProductAdapter extends ArrayAdapter<Product> implements Filterable 
 			notifyDataSetChanged();
 			Log.e("after fil", "list.size =  " +list.size());
 			Log.e("after fil", "filter.size =  " + filterList.size());
-			clear();
-			for(int i = 0, l = filterList.size(); i < l; i++)
-				add(filterList.get(i));
-			notifyDataSetInvalidated();
 		}
 	}
 	public List<Product> getFilterList(){
