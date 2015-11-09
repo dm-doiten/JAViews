@@ -1,6 +1,7 @@
 package pollcorp.iriview.Fragments;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,8 +11,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -70,6 +73,8 @@ public class ProductListFragment extends Fragment implements AbsListView.OnItemC
 	private List<Product> products;
 	private int loadedPage = 0;
 	private int preLast;
+	private View header;
+	private Button searchBtn;
 
 	// TODO: Rename and change types of parameters
 	public static ProductListFragment newInstance(String param1, String param2) {
@@ -96,9 +101,6 @@ public class ProductListFragment extends Fragment implements AbsListView.OnItemC
 			mParam1 = getArguments().getString(ARG_PARAM1);
 			mParam2 = getArguments().getString(ARG_PARAM2);
 		}
-		products = MyApp.getInstance().getProducts();
-		//Init adapter.
-		adapter = new ProductAdapter(getActivity().getApplicationContext(), products);
 	}
 
 	private void loadMorePage() {
@@ -180,11 +182,27 @@ public class ProductListFragment extends Fragment implements AbsListView.OnItemC
 				getProductList(0);//Load the first page
 			}
 		});
-		if (products.isEmpty() || products == null)
-			getProductList(0);//Load the first page
 		// Set the adapter
 		mListView = (ListView) view.findViewById(android.R.id.list);
 		mListView.setDivider(null);
+		products = MyApp.getInstance().getProducts();
+		if (products.isEmpty() || products == null)
+			getProductList(0);//Load the first page
+		//Init adapter.
+		header = inflater.inflate(R.layout.search_button, null);
+		searchBtn = (Button) header.findViewById(R.id.search_btn);
+		searchBtn.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				//TODO search online.
+				Log.e(getClass().getSimpleName(), "search online");
+				if (mListView != null && header != null && mListView.getHeaderViewsCount() > 0)
+					mListView.removeHeaderView(header);
+				RConstant.hideSoftKeyboard(getActivity());
+				getProductList(0);
+			}
+		});
+		adapter = new ProductAdapter(getActivity().getApplicationContext(), products, mListView, header);
 		mListView.setAdapter(adapter);
 		// Set OnItemClickListener so we can be notified on item clicks
 		mListView.setOnItemClickListener(this);

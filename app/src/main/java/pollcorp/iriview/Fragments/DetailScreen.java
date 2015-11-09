@@ -101,7 +101,7 @@ public class DetailScreen extends ActionBarActivity implements ActionBar.TabList
 	private void getProductDetail() {
 		String url = RConstant.url_device_detail;
 		final String TAG = getClass().getSimpleName();
-		StringRequest jsonObjReq = new StringRequest(Request.Method.POST,url, new Response.Listener<String>() {
+		StringRequest jsonObjReq = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
 			@Override
 			public void onResponse(String response) {
 				Log.d(TAG, response);
@@ -124,10 +124,10 @@ public class DetailScreen extends ActionBarActivity implements ActionBar.TabList
 			public void onErrorResponse(VolleyError error) {
 				Log.d(TAG, error.toString());
 			}
-		}){
+		}) {
 			@Override
-			protected Map<String,String> getParams(){
-				Map<String,String> params = new HashMap<String, String>();
+			protected Map<String, String> getParams() {
+				Map<String, String> params = new HashMap<String, String>();
 				params.put("Content-Type", "application/x-www-form-urlencoded");
 				params.put("objectId", MyApp.getInstance().getCurrentObjectId());
 				Log.d(TAG, params.toString());
@@ -136,8 +136,8 @@ public class DetailScreen extends ActionBarActivity implements ActionBar.TabList
 
 			@Override
 			public Map<String, String> getHeaders() throws AuthFailureError {
-				Map<String,String> headers = new HashMap<String, String>();
-				headers.put("Content-Type","application/x-www-form-urlencoded");
+				Map<String, String> headers = new HashMap<String, String>();
+				headers.put("Content-Type", "application/x-www-form-urlencoded");
 				headers.put(RConstant.parse_app_id_key, RConstant.parse_app_id_val);
 				headers.put(RConstant.parse_api_id_key, RConstant.parse_api_id_val);
 				Log.d(TAG, headers.toString());
@@ -161,11 +161,12 @@ public class DetailScreen extends ActionBarActivity implements ActionBar.TabList
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
+		if (id == R.id.action_favorite) {
+			//TODO Save to favorite
 
-		//noinspection SimplifiableIfStatement
-		if (id == R.id.action_settings) {
 			return true;
 		}
+		//noinspection SimplifiableIfStatement
 
 		return super.onOptionsItemSelected(item);
 	}

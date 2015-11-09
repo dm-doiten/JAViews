@@ -1,16 +1,16 @@
 package pollcorp.iriview.Fragments;
 
-import android.support.v7.app.ActionBarActivity;
 import android.app.Activity;
-import android.support.v7.app.ActionBar;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.ActionBarDrawerToggle;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.app.Fragment;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,17 +19,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.FrameLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import pollcorp.iriview.R;
+import pollcorp.iriview.models.RoundImage;
 
-/**
- * Fragment used for managing interactions for and presentation of a navigation drawer.
- * See the <a href="https://developer.android.com/design/patterns/navigation-drawer.html#Interaction">
- * design guidelines</a> for a complete explanation of the behaviors implemented here.
- */
-public class NavigationDrawerFragment extends Fragment {
+public class MyDrawerFragment extends Fragment {
 
 	/**
 	 * Remember the position of the selected item.
@@ -52,15 +50,18 @@ public class NavigationDrawerFragment extends Fragment {
 	 */
 	private ActionBarDrawerToggle mDrawerToggle;
 
+	private FrameLayout frameLayout;
 	private DrawerLayout mDrawerLayout;
 	private ListView mDrawerListView;
+	private RoundImage img;
+	private TextView name;
 	private View mFragmentContainerView;
 
 	private int mCurrentSelectedPosition = 0;
 	private boolean mFromSavedInstanceState;
 	private boolean mUserLearnedDrawer;
 
-	public NavigationDrawerFragment() {
+	public MyDrawerFragment() {
 	}
 
 	@Override
@@ -91,8 +92,12 @@ public class NavigationDrawerFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 	                         Bundle savedInstanceState) {
-		mDrawerListView = (ListView) inflater.inflate(
-				R.layout.fragment_navi_drawer, container, false);
+		frameLayout = (FrameLayout) inflater.inflate(
+				R.layout.fragment_my_drawer, container, false);
+		mDrawerListView = (ListView) frameLayout.findViewById(R.id.drawer_listview);
+		img = (RoundImage) frameLayout.findViewById(R.id.profle_img);
+		name = (TextView) frameLayout.findViewById(R.id.profile_name);
+
 		mDrawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -109,7 +114,16 @@ public class NavigationDrawerFragment extends Fragment {
 						getString(R.string.title_section3),
 				}));
 		mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
-		return mDrawerListView;
+		return frameLayout;
+	}
+
+	public RoundImage getImg() {
+		return img;
+	}
+
+	public void setName(String text) {
+		if (name != null)
+			name.setText(text);
 	}
 
 	public boolean isDrawerOpen() {
@@ -237,7 +251,7 @@ public class NavigationDrawerFragment extends Fragment {
 		// If the drawer is open, show the global app actions in the action bar. See also
 		// showGlobalContextActionBar, which controls the top-left area of the action bar.
 		if (mDrawerLayout != null && isDrawerOpen()) {
-			inflater.inflate(R.menu.global, menu);
+			//inflater.inflate(R.menu.global, menu);
 			showGlobalContextActionBar();
 		}
 		super.onCreateOptionsMenu(menu, inflater);

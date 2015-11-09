@@ -23,15 +23,18 @@ import android.widget.Toast;
 
 import pollcorp.iriview.MyApp;
 import pollcorp.iriview.R;
+import pollcorp.iriview.adapters.ProductAdapter;
 
 
 public class HomeActivity extends ActionBarActivity
-		implements NavigationDrawerFragment.NavigationDrawerCallbacks, ProductListFragment.OnProductListFragmentInteractionListener, BookmarkFragment.OnBookmarkFragmentInteractionListener, SearchView.OnQueryTextListener {
+		implements MyDrawerFragment.NavigationDrawerCallbacks,
+		ProductListFragment.OnProductListFragmentInteractionListener,
+		BookmarkFragment.OnBookmarkFragmentInteractionListener, SearchView.OnQueryTextListener{
 
 	/**
 	 * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
 	 */
-	private NavigationDrawerFragment mNavigationDrawerFragment;
+	private MyDrawerFragment mNavigationDrawerFragment;
 
 	/**
 	 * Used to store the last screen title. For use in {@link #restoreActionBar()}.
@@ -47,7 +50,7 @@ public class HomeActivity extends ActionBarActivity
 		setContentView(R.layout.activity_home);
 
 		setupActionbar();
-		mNavigationDrawerFragment = (NavigationDrawerFragment)
+		mNavigationDrawerFragment = (MyDrawerFragment)
 				getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
 		mTitle = getTitle();
 
@@ -55,9 +58,9 @@ public class HomeActivity extends ActionBarActivity
 		mNavigationDrawerFragment.setUp(
 				R.id.navigation_drawer,
 				(DrawerLayout) findViewById(R.id.drawer_layout));
-		//FragmentManager fragmentManager = getSupportFragmentManager();
-		//ProductListFragment fragment = ProductListFragment.newInstance("1", "2");
-		//fragmentManager.beginTransaction().replace(R.id.container, fragment).commit();
+		//TODO setup profile bar.
+		mNavigationDrawerFragment.setName("Iphone 6");
+		//mNavigationDrawerFragment.getImg();//Set img
 	}
 
 	@Override
@@ -141,17 +144,15 @@ public class HomeActivity extends ActionBarActivity
 		int id = item.getItemId();
 
 		//noinspection SimplifiableIfStatement
-		if (id == R.id.action_settings) {
-			Toast.makeText(getApplicationContext(), "Setting Screen", Toast.LENGTH_SHORT).show();
-			return true;
-		}
 
 		return super.onOptionsItemSelected(item);
 	}
-	public void openDetailScreen(){
+
+	public void openDetailScreen() {
 		Intent intent = new Intent(HomeActivity.this, DetailScreen.class);
 		startActivity(intent);
 	}
+
 	@Override
 	public void onProductListFragmentInteraction(String id, String name) {
 		MyApp.getInstance().setCurrentObjectId(id);
@@ -219,10 +220,12 @@ public class HomeActivity extends ActionBarActivity
 					getArguments().getInt(ARG_SECTION_NUMBER));
 		}
 	}
-	public void setupActionbar(){
+
+	public void setupActionbar() {
 		int titleId = getResources().getIdentifier("action_bar_title", "id", "android");
 		TextView abTitle = (TextView) findViewById(titleId);
 		if (abTitle != null)
 			abTitle.setTextColor(getResources().getColor(R.color.header_text));
 	}
+
 }

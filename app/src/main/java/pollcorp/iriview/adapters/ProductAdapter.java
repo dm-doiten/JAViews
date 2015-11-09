@@ -10,6 +10,7 @@ import android.widget.BaseAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -30,24 +31,28 @@ public class ProductAdapter extends BaseAdapter implements Filterable {
 	private FriendFilter friendFilter;
 	private List<Product> filterList;
 	private List<Product> list;//original data.
+	private ListView listView;
+	private View header;
 
-	public ProductAdapter(Context context, List<Product> products) {
+	public ProductAdapter(Context context, List<Product> products, ListView listview, View view) {
 		this.context = context;
 		this.list = new ArrayList<Product>();
 		this.list.addAll(products);
 		this.filterList = new ArrayList<Product>();
 		this.filterList.addAll(list);
-		Log.e("Constructor", "list.size =  " +list.size());
+		Log.e("Constructor", "list.size =  " + list.size());
 		Log.e("Constructor", "filter.size =  " + filterList.size());
-
+		this.listView = listview;
+		this.header = view;
 		getFilter();
 	}
+
 	public void pull(List<Product> newData) {
 		this.list = new ArrayList<Product>();
 		this.list.addAll(newData);
 		this.filterList = new ArrayList<Product>();//Just copy for backup original data
 		this.filterList.addAll(list);
-		Log.e("notifyDataSetChanged", "list.size =  " +list.size());
+		Log.e("notifyDataSetChanged", "list.size =  " + list.size());
 		Log.e("notifyDataSetChanged", "filter.size =  " + filterList.size());
 		super.notifyDataSetChanged();//products change->filterList change -> update view.
 	}
@@ -66,11 +71,13 @@ public class ProductAdapter extends BaseAdapter implements Filterable {
 	public long getItemId(int position) {
 		return 0;
 	}
+
 	static class ViewHolder {
 		public TextView name;
 		public ImageView thumbnail;
 		public TextView score;
 	}
+
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		Log.e("getView", "v " + position);
@@ -78,7 +85,7 @@ public class ProductAdapter extends BaseAdapter implements Filterable {
 
 		View view = convertView;
 		Product product = filterList.get(position);
-		if (view == null){
+		if (view == null) {
 			view = LayoutInflater.from(context).inflate(R.layout.product_item, parent, false);
 			// configure view holder
 			ViewHolder viewHolder = new ViewHolder();
@@ -94,8 +101,10 @@ public class ProductAdapter extends BaseAdapter implements Filterable {
 		Picasso.with(context).load(product.getThumbnail()).fit().centerCrop().error(R.drawable.error_thumbnail).into(holder.thumbnail);
 		return view;
 	}
+
 	/**
 	 * Get custom filter
+	 *
 	 * @return filter
 	 */
 	@Override
@@ -106,6 +115,7 @@ public class ProductAdapter extends BaseAdapter implements Filterable {
 
 		return friendFilter;
 	}
+
 	/**
 	 * Custom filter for friend list
 	 * Filter content in friend list according to the search text
@@ -115,7 +125,7 @@ public class ProductAdapter extends BaseAdapter implements Filterable {
 		@Override
 		protected FilterResults performFiltering(CharSequence constraint) {
 			FilterResults filterResults = new FilterResults();
-			if (constraint!=null && constraint.length()>0) {
+			if (constraint != null && constraint.length() > 0) {
 				ArrayList<Product> tempList = new ArrayList<Product>();
 
 				// search content in friend list
@@ -137,8 +147,9 @@ public class ProductAdapter extends BaseAdapter implements Filterable {
 
 		/**
 		 * Notify about filtered list to ui
+		 *
 		 * @param constraint text
-		 * @param results filtered result
+		 * @param results    filtered result
 		 */
 		@SuppressWarnings("unchecked")
 		@Override
@@ -147,12 +158,30 @@ public class ProductAdapter extends BaseAdapter implements Filterable {
 			filterList = (ArrayList<Product>) results.values;
 			Log.e(getClass().getSimpleName(), "Found " + filterList.size());
 			notifyDataSetChanged();
-			Log.e("after fil", "list.size =  " +list.size());
+			Log.e("after fil", "list.size =  " + list.size());
 			Log.e("after fil", "filter.size =  " + filterList.size());
+			if (filterList.size() == 0) {
+				//TODO add header button to search online.
+				addHeader();
+			} else {
+				//TODO remove header button if exist.
+				removeHeader();
+			}
 		}
 	}
-	public List<Product> getFilterList(){
+
+	public List<Product> getFilterList() {
 		return filterList;
 	}
 
+	public void addHeader() {
+		if (header != null && listView != null && listView.getHeaderViewsCount() == 0)
+			listView.addHeaderView(header);
+	}
+
+	public void removeHeader() {
+		if (header != null && listView != null && listView.getHeaderViewsCount() == 1)
+			listView.removeHeaderView(header);
+
+	}
 }
