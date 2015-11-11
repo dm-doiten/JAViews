@@ -24,4 +24,5 @@ dependencies {
     compile 'com.android.support:appcompat-v7:22.2.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.mcxiaoke.volley:library-aar:1.0.0'
+    compile 'com.jaredrummler:android-device-names:1.0.1'
 }

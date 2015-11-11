@@ -71,6 +71,7 @@ public class ProductListFragment extends Fragment implements AbsListView.OnItemC
 	private ListView mListView;
 	private ProductAdapter adapter;
 	private List<Product> products;
+	private List<Product> search_products = new ArrayList<Product>();
 	private int loadedPage = 0;
 	private int preLast;
 	private View header;
@@ -179,7 +180,10 @@ public class ProductListFragment extends Fragment implements AbsListView.OnItemC
 		mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
 			@Override
 			public void onRefresh() {
-				getProductList(0);//Load the first page
+				if (MyApp.getInstance().getSearchText().isEmpty())
+					getProductList(0);//Load the first page
+				else
+					search(MyApp.getInstance().getSearchText());
 			}
 		});
 		// Set the adapter
@@ -199,7 +203,7 @@ public class ProductListFragment extends Fragment implements AbsListView.OnItemC
 				if (mListView != null && header != null && mListView.getHeaderViewsCount() > 0)
 					mListView.removeHeaderView(header);
 				RConstant.hideSoftKeyboard(getActivity());
-				getProductList(0);
+				search(MyApp.getInstance().getSearchText());
 			}
 		});
 		adapter = new ProductAdapter(getActivity().getApplicationContext(), products, mListView, header);
@@ -241,7 +245,10 @@ public class ProductListFragment extends Fragment implements AbsListView.OnItemC
 		});
 		return view;
 	}
-
+	public void removeHeaderView(){
+		if (mListView != null && header != null && mListView.getHeaderViewsCount() > 0)
+			mListView.removeHeaderView(header);
+	}
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
@@ -266,6 +273,7 @@ public class ProductListFragment extends Fragment implements AbsListView.OnItemC
 			// Notify the active callbacks interface (the activity, if the
 			// fragment is attached to one) that an item has been selected.
 			Activity act = (HomeActivity) getActivity();
+			Log.e("position", " " + position);
 			mListener.onProductListFragmentInteraction(adapter.getFilterList().get(position).getObjectId(), adapter.getFilterList().get(position).getName());
 		}
 	}
@@ -285,6 +293,75 @@ public class ProductListFragment extends Fragment implements AbsListView.OnItemC
 
 	public void filter(String text) {
 		adapter.getFilter().filter(text);
+	}
+
+	public void search(final String text) {
+
+		String url = RConstant.url_search;
+		final String TAG = getClass().getSimpleName();
+		//Connect to url.
+		mSwipeRefreshLayout.post(new Runnable() {
+			@Override
+			public void run() {
+				mSwipeRefreshLayout.setRefreshing(true);
+			}
+		});
+		StringRequest jsonObjReq = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+			@Override
+			public void onResponse(String response) {
+				Log.e(TAG, response.toString());
+				mSwipeRefreshLayout.setRefreshing(false);
+				try {
+					JSONObject jsonObj = new JSONObject(response);
+					search_products.clear();
+					JSONArray arr = jsonObj.getJSONArray("result");
+					for (int i = 0; i < arr.length(); i++) {
+						JSONObject obj = arr.getJSONObject(i);
+						Product product = new Product(obj);
+						search_products.add(product);
+					}
+					Log.e(TAG, search_products.toString());
+					adapter.pull(search_products);
+					MyApp.getInstance().setProducts(search_products);
+				} catch (JSONException e) {
+					Log.d(TAG, "Can not parse responded json.");
+					e.printStackTrace();
+				}
+			}
+		}, new Response.ErrorListener() {
+			@Override
+			public void onErrorResponse(VolleyError error) {
+				Log.d(TAG, error.toString());
+				mSwipeRefreshLayout.setRefreshing(false);
+			}
+		}) {
+			@Override
+			protected Map<String, String> getParams() {
+				Map<String, String> params = new HashMap<String, String>();
+				params.put("Content-Type", "application/x-www-form-urlencoded");
+				params.put("request_type", "0");
+				params.put("device", text);
+				Log.d(TAG, params.toString());
+				return params;
+			}
+
+			@Override
+			public Map<String, String> getHeaders() throws AuthFailureError {
+				Map<String, String> headers = new HashMap<String, String>();
+				headers.put("Content-Type", "application/x-www-form-urlencoded");
+				headers.put(RConstant.parse_app_id_key, RConstant.parse_app_id_val);
+				headers.put(RConstant.parse_api_id_key, RConstant.parse_api_id_val);
+				Log.d(TAG, headers.toString());
+				return headers;
+			}
+		};
+		//Adding request to request queue
+		MyApp.getInstance().addToRequestQueue(jsonObjReq);
+	}
+
+	public void closeSearchView() {
+		MyApp.getInstance().setProducts(products);
+		adapter.pull(products);
 	}
 
 	/**

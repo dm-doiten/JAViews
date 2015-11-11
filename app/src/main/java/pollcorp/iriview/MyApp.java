@@ -32,7 +32,7 @@ public class MyApp extends Application {
 	private String curName;
 
 	private JSONObject detailResponse;
-
+	private String searchtext = "";
 
 	@Override
 	public void onCreate() {
@@ -112,5 +112,12 @@ public class MyApp extends Application {
 
 	public void setCurName(String curName) {
 		this.curName = curName;
+	}
+
+	public void setSearchText(String s) {
+		this.searchtext = s;
+	}
+	public String getSearchText(){
+		return this.searchtext;
 	}
 }

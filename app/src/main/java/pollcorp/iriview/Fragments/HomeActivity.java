@@ -21,6 +21,8 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.jaredrummler.android.device.DeviceName;
+
 import pollcorp.iriview.MyApp;
 import pollcorp.iriview.R;
 import pollcorp.iriview.adapters.ProductAdapter;
@@ -29,7 +31,7 @@ import pollcorp.iriview.adapters.ProductAdapter;
 public class HomeActivity extends ActionBarActivity
 		implements MyDrawerFragment.NavigationDrawerCallbacks,
 		ProductListFragment.OnProductListFragmentInteractionListener,
-		BookmarkFragment.OnBookmarkFragmentInteractionListener, SearchView.OnQueryTextListener{
+		BookmarkFragment.OnBookmarkFragmentInteractionListener, SearchView.OnQueryTextListener, SearchView.OnCloseListener {
 
 	/**
 	 * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -50,16 +52,34 @@ public class HomeActivity extends ActionBarActivity
 		setContentView(R.layout.activity_home);
 
 		setupActionbar();
+		setupDrawableMenu();
+		setupProfileBar();
+	}
+
+	private void setupDrawableMenu() {
 		mNavigationDrawerFragment = (MyDrawerFragment)
 				getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
 		mTitle = getTitle();
-
 		// Set up the drawer.
 		mNavigationDrawerFragment.setUp(
 				R.id.navigation_drawer,
 				(DrawerLayout) findViewById(R.id.drawer_layout));
-		//TODO setup profile bar.
-		mNavigationDrawerFragment.setName("Iphone 6");
+	}
+
+	private void setupProfileBar() {
+		String deviceName = "Unknown Device";
+		DeviceName.with(getApplicationContext()).request(new DeviceName.Callback() {
+			@Override
+			public void onFinished(DeviceName.DeviceInfo info, Exception error) {
+				String deviceName;
+				if (error != null) {
+					deviceName = info.getName();
+				} else {
+					deviceName = DeviceName.getDeviceName();
+				}
+				mNavigationDrawerFragment.setName(deviceName);
+			}
+		});
 		//mNavigationDrawerFragment.getImg();//Set img
 	}
 
@@ -131,6 +151,19 @@ public class HomeActivity extends ActionBarActivity
 
 			searchView.setSubmitButtonEnabled(true);
 			searchView.setOnQueryTextListener(this);
+			searchView.setOnCloseListener(this);
+			searchView.setQueryHint("Device name");
+			final MenuItem searchMenuItem = menu.findItem(R.id.action_search);
+			searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
+				@Override
+				public void onFocusChange(View view, boolean queryTextFocused) {
+					if (!queryTextFocused) {
+						searchMenuItem.collapseActionView();
+						searchView.setQuery("", false);
+						searchView.setIconified(true);
+					}
+				}
+			});
 			return true;
 		}
 		return super.onCreateOptionsMenu(menu);
@@ -169,6 +202,10 @@ public class HomeActivity extends ActionBarActivity
 	@Override
 	public boolean onQueryTextSubmit(String s) {
 		Log.e(getClass().getSimpleName(), "Submitted:" + s);
+		if (fragment1 == null)
+			fragment1 = ProductListFragment.newInstance("1", "2");
+		fragment1.removeHeaderView();
+		fragment1.search(s);
 		return false;
 	}
 
@@ -178,7 +215,17 @@ public class HomeActivity extends ActionBarActivity
 			fragment1 = ProductListFragment.newInstance("1", "2");
 		fragment1.filter(s);
 		Log.e(getClass().getSimpleName(), "Changed:" + s);
+		MyApp.getInstance().setSearchText(s);
 		return true;
+	}
+
+	@Override
+	public boolean onClose() {
+		if (fragment1 == null)
+			fragment1 = ProductListFragment.newInstance("1", "2");
+		fragment1.closeSearchView();
+		Log.e("onClose", "onClose");
+		return false;
 	}
 
 	/**
