@@ -94,7 +94,7 @@ public class MyApp extends Application {
 	public String getCurrentObjectId(){
 
 		//return curObjectId;
-		return "LIXxAEzwng";
+		return "B0YzrSVmZD";
 	}
 	public void setCurrentObjectId(String objectId){
 		curObjectId = objectId;

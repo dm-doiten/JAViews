@@ -57,7 +57,7 @@ public class BasePro {
 			e.printStackTrace();
 		}
 		try {
-			this.thumbnail = obj.getString("image");
+			this.thumbnail = obj.getString("thumbnail");
 		} catch (JSONException e) {
 			this.thumbnail = "http://www.";
 			e.printStackTrace();

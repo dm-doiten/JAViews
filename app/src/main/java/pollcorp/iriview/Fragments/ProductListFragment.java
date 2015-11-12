@@ -296,10 +296,10 @@ public class ProductListFragment extends Fragment implements AbsListView.OnItemC
 	}
 
 	public void search(final String text) {
-
 		String url = RConstant.url_search;
 		final String TAG = getClass().getSimpleName();
 		//Connect to url.
+		mSwipeRefreshLayout.setEnabled(false);
 		mSwipeRefreshLayout.post(new Runnable() {
 			@Override
 			public void run() {

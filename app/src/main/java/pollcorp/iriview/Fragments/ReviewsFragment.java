@@ -73,8 +73,7 @@ public class ReviewsFragment extends Fragment implements AbsListView.OnItemClick
 	private int lastTopValue = 0;
 	private int mLastFirstVisibleItem = 0;
 	NetworkImageView mNetworkImageView;
-	private String IMAGE_URL =
-			"http://developer.android.com/images/training/system-ui.png";
+	private String IMAGE_URL;
 
 	// TODO: Rename and change types of parameters
 	public static ReviewsFragment newInstance(String param1, String param2) {
@@ -180,10 +179,10 @@ public class ReviewsFragment extends Fragment implements AbsListView.OnItemClick
 
 			if (currentFirstVisibleItem > mLastFirstVisibleItem) {
 				// getSherlockActivity().getSupportActionBar().hide();
-				((ActionBarActivity)getActivity()).getSupportActionBar().hide();
+				((ActionBarActivity) getActivity()).getSupportActionBar().hide();
 			} else if (currentFirstVisibleItem < mLastFirstVisibleItem) {
 				// getSherlockActivity().getSupportActionBar().show();
-				((ActionBarActivity)getActivity()).getSupportActionBar().show();
+				((ActionBarActivity) getActivity()).getSupportActionBar().show();
 			}
 			mLastFirstVisibleItem = currentFirstVisibleItem;
 		}
@@ -206,7 +205,9 @@ public class ReviewsFragment extends Fragment implements AbsListView.OnItemClick
 				tvHeadline.setText(headlineText);
 			if (overalScore != null)
 				tvOveralScore.setText(overalScore);
-			IMAGE_URL = jsonObject.getString("image");
+			JSONArray images = jsonObject.getJSONArray("images");
+			if (images.length() > 0)
+				IMAGE_URL = images.getString(0);
 			JSONArray jsonPros = jsonObject.getJSONArray("pros");
 			JSONArray jsonCons = jsonObject.getJSONArray("cons");
 			list = new ArrayList<ProsCons>();
@@ -214,14 +215,17 @@ public class ReviewsFragment extends Fragment implements AbsListView.OnItemClick
 				list.add(new ProsCons(jsonPros.getString(i), false));
 			}
 			for (int i = 0; i < jsonCons.length(); i++) {
-				list.add(new ProsCons(jsonCons.getString(i) , true));
+				list.add(new ProsCons(jsonCons.getString(i), true));
 			}
 			adapter = new ProConAdapter(getActivity(), list);
 			mListView.setAdapter(adapter);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-		mNetworkImageView.setImageUrl(IMAGE_URL, MyApp.getInstance().getImageLoader());
+		if (IMAGE_URL != null && !IMAGE_URL.isEmpty())
+			mNetworkImageView.setImageUrl(IMAGE_URL, MyApp.getInstance().getImageLoader());
+		else
+			mNetworkImageView.setImageResource(R.drawable.cellphones);
 	}
 
 	public interface OnFragmentInteractionListener {
