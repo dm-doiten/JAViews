@@ -32,14 +32,7 @@ public class FavoriteAdapter extends BaseAdapter {
 
 	public FavoriteAdapter(Context context, List<DBProduct> products) {
 		this.context = context;
-		this.list = new ArrayList<DBProduct>();
-		this.list.addAll(products);
-	}
-
-	public void pull(List<DBProduct> newData) {
-		this.list = new ArrayList<DBProduct>();
-		this.list.addAll(newData);
-		super.notifyDataSetChanged();//products change->filterList change -> update view.
+		this.list = products;
 	}
 
 	@Override

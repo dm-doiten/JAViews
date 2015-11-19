@@ -1,6 +1,8 @@
 package pollcorp.iriview.Fragments;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
@@ -14,12 +16,18 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.baoyz.swipemenulistview.SwipeMenu;
+import com.baoyz.swipemenulistview.SwipeMenuCreator;
+import com.baoyz.swipemenulistview.SwipeMenuItem;
+import com.baoyz.swipemenulistview.SwipeMenuListView;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import pollcorp.iriview.MyApp;
 import pollcorp.iriview.R;
 import pollcorp.iriview.Util.DB;
+import pollcorp.iriview.Util.RConstant;
 import pollcorp.iriview.adapters.FavoriteAdapter;
 import pollcorp.iriview.dbmodels.DBProduct;
 import pollcorp.iriview.models.Product;
@@ -40,9 +48,10 @@ public class BookmarkFragment extends Fragment implements AbsListView.OnItemClic
 	private String mParam1;
 	private String mParam2;
 
-	private ListView mListView;
+	private SwipeMenuListView mListView;
 	private FavoriteAdapter mAdapter;
 	private List<DBProduct> data = new ArrayList<DBProduct>();
+	private SwipeMenuCreator creator;
 
 	// TODO: Rename and change types of parameters
 	public static BookmarkFragment newInstance(String param1, String param2) {
@@ -70,6 +79,28 @@ public class BookmarkFragment extends Fragment implements AbsListView.OnItemClic
 		}
 		data = DB.getAllProduct();
 		mAdapter = new FavoriteAdapter(getActivity(), data);
+		createSwipeCreator();
+	}
+
+	private void createSwipeCreator() {
+		creator = new SwipeMenuCreator() {
+
+			@Override
+			public void create(SwipeMenu menu) {
+				// create "delete" item
+				SwipeMenuItem deleteItem = new SwipeMenuItem(
+						getActivity().getApplicationContext());
+				// set item background
+				deleteItem.setBackground(new ColorDrawable(Color.rgb(0xF9,
+						0x3F, 0x25)));
+				// set item width
+				deleteItem.setWidth(RConstant.dp2px(getActivity().getApplicationContext(), 90));
+				// set a icon
+				deleteItem.setIcon(R.drawable.ic_delete_white_48dp);
+				// add to menu
+				menu.addMenuItem(deleteItem);
+			}
+		};
 	}
 
 	@Override
@@ -78,9 +109,9 @@ public class BookmarkFragment extends Fragment implements AbsListView.OnItemClic
 		View view = inflater.inflate(R.layout.fragment_bookmark, container, false);
 
 		// Set the adapter
-		mListView = (ListView) view.findViewById(android.R.id.list);
+		mListView = (SwipeMenuListView) view.findViewById(android.R.id.list);
 		((AdapterView<ListAdapter>) mListView).setAdapter(mAdapter);
-
+		mListView.setMenuCreator(creator);
 		// Set OnItemClickListener so we can be notified on item clicks
 		mListView.setOnItemClickListener(this);
 		mListView.setOnScrollListener(new AbsListView.OnScrollListener() {
@@ -106,7 +137,24 @@ public class BookmarkFragment extends Fragment implements AbsListView.OnItemClic
 				}
 			}
 		});
-
+		mListView.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
+			@Override
+			public boolean onMenuItemClick(int position, SwipeMenu menu, int index) {
+				switch (index) {
+					case 0:
+						// delete
+						DB.delOne(data.get(position));
+						//TODO update view
+						data = DB.getAllProduct();
+						mAdapter = new FavoriteAdapter(getActivity(), data);
+						mListView.setAdapter(mAdapter);
+						break;
+				}
+				// false : close the menu; true : not close the menu
+				return false;
+			}
+		});
+		mListView.setSwipeDirection(SwipeMenuListView.DIRECTION_LEFT);
 		return view;
 	}
 

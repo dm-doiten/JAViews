@@ -49,6 +49,9 @@ public class DB {
 
 	public static void delAll() {
 		new Delete().from(DBProduct.class).execute();
-		return;
+	}
+
+	public static void delOne(DBProduct product) {
+		new Delete().from(DBProduct.class).where("ObjectId = ?", product.objectId).execute();
 	}
 }
