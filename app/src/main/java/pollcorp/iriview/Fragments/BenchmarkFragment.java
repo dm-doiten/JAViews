@@ -72,7 +72,6 @@ public class BenchmarkFragment extends Fragment {
 //		mChart3 = (HorizontalBarChart) view.findViewById(R.id.chart3);
 
 		setupChart(mChart1);
-
 		return view;
 	}
 

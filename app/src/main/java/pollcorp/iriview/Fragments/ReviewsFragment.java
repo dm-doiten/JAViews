@@ -29,7 +29,6 @@ import java.util.List;
 import pollcorp.iriview.MyApp;
 import pollcorp.iriview.R;
 
-import pollcorp.iriview.Fragments.dummy.DummyContent;
 import pollcorp.iriview.adapters.ProConAdapter;
 import pollcorp.iriview.models.ProsCons;
 import pollcorp.iriview.models.RoundImage;
@@ -148,9 +147,6 @@ public class ReviewsFragment extends Fragment implements AbsListView.OnItemClick
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 		if (null != mListener) {
-			// Notify the active callbacks interface (the activity, if the
-			// fragment is attached to one) that an item has been selected.
-			mListener.onFragmentInteraction(DummyContent.ITEMS.get(position).id);
 		}
 	}
 

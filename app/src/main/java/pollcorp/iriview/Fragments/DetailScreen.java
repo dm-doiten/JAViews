@@ -153,8 +153,19 @@ public class DetailScreen extends ActionBarActivity implements ActionBar.TabList
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
+
 		getMenuInflater().inflate(R.menu.menu_detail_screen, menu);
+		if (menu.size() == 0)
+			return true;
+		MenuItem favor = menu.getItem(0);
+		Product product = MyApp.getInstance().getCurrentProduct();
+		if (product.isFavor()) {
+			favor.setIcon(R.drawable.ic_favorite_white_48dp);
+			favor.setEnabled(false);
+		} else {
+			favor.setIcon(R.drawable.ic_favorite_black_24dp);
+			favor.setEnabled(true);
+		}
 		return true;
 	}
 
@@ -162,7 +173,11 @@ public class DetailScreen extends ActionBarActivity implements ActionBar.TabList
 	public boolean onOptionsItemSelected(MenuItem item) {
 		int id = item.getItemId();
 		if (id == R.id.action_favorite) {
+			//update list data.
+			MyApp.getInstance().getCurrentProduct().setFavor(true);
 			DB.addProduct(new DBProduct(MyApp.getInstance().getCurrentProduct()));
+			item.setIcon(R.drawable.ic_favorite_white_48dp);
+			item.setEnabled(false);
 			return true;
 		}
 		return super.onOptionsItemSelected(item);

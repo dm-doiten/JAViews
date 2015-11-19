@@ -19,16 +19,11 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.SearchView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.activeandroid.query.Select;
 import com.jaredrummler.android.device.DeviceName;
 
 import pollcorp.iriview.MyApp;
 import pollcorp.iriview.R;
-import pollcorp.iriview.Util.DB;
-import pollcorp.iriview.adapters.ProductAdapter;
-import pollcorp.iriview.dbmodels.DBProduct;
 import pollcorp.iriview.models.Product;
 
 
@@ -94,6 +89,7 @@ public class HomeActivity extends ActionBarActivity
 
 		switch (position) {
 			case 0: //Home screen
+				MyApp.getInstance().isShowSearch = true;
 				if (fragment1 == null)
 					fragment1 = ProductListFragment.newInstance("1", "2");
 				fragmentManager.beginTransaction()
@@ -101,12 +97,14 @@ public class HomeActivity extends ActionBarActivity
 						.commit();
 				break;
 			case 1: //Bookmark Screen
-				BookmarkFragment fragment2 = BookmarkFragment.newInstance("1", "2");
+				MyApp.getInstance().isShowSearch = false;
+				WishlistFragment fragment2 = WishlistFragment.newInstance("1", "2");
 				fragmentManager.beginTransaction()
 						.replace(R.id.container, fragment2)
 						.commit();
 				break;
 			case 2: //About Screen
+				MyApp.getInstance().isShowSearch = false;
 				AboutFragment fragment3 = AboutFragment.newInstance("1", "2");
 				fragmentManager.beginTransaction()
 						.replace(R.id.container, fragment3)
@@ -143,31 +141,35 @@ public class HomeActivity extends ActionBarActivity
 			// Only show items in the action bar relevant to this screen
 			// if the drawer is not showing. Otherwise, let the drawer
 			// decide what to show in the action bar.
-			getMenuInflater().inflate(R.menu.home, menu);
 			restoreActionBar();
 
-			// Associate searchable configuration with the SearchView
-			SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-			searchView = (SearchView) menu.findItem(R.id.action_search)
-					.getActionView();
-			searchView.setSearchableInfo(searchManager
-					.getSearchableInfo(getComponentName()));
+			if (MyApp.getInstance().isShowSearch) {
+				getMenuInflater().inflate(R.menu.home, menu);
 
-			searchView.setSubmitButtonEnabled(true);
-			searchView.setOnQueryTextListener(this);
-			searchView.setOnCloseListener(this);
-			searchView.setQueryHint("Device name");
-			final MenuItem searchMenuItem = menu.findItem(R.id.action_search);
-			searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
-				@Override
-				public void onFocusChange(View view, boolean queryTextFocused) {
-					if (!queryTextFocused) {
-						searchMenuItem.collapseActionView();
-						searchView.setQuery("", false);
-						searchView.setIconified(true);
+				// Associate searchable configuration with the SearchView
+				SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+				searchView = (SearchView) menu.findItem(R.id.action_search)
+						.getActionView();
+				searchView.setSearchableInfo(searchManager
+						.getSearchableInfo(getComponentName()));
+
+				searchView.setSubmitButtonEnabled(true);
+				searchView.setOnQueryTextListener(this);
+				searchView.setOnCloseListener(this);
+				searchView.setQueryHint("Device name");
+				searchView.setSubmitButtonEnabled(false);
+				final MenuItem searchMenuItem = menu.findItem(R.id.action_search);
+				searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
+					@Override
+					public void onFocusChange(View view, boolean queryTextFocused) {
+						if (!queryTextFocused) {
+							searchMenuItem.collapseActionView();
+							searchView.setQuery("", false);
+							searchView.setIconified(true);
+						}
 					}
-				}
-			});
+				});
+			}
 			return true;
 		}
 		return super.onCreateOptionsMenu(menu);

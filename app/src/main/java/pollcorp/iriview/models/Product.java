@@ -13,16 +13,27 @@ public class Product extends BasePro{
 	private String released;
 	private String headline;
 	private int score;
+	private boolean isFavor;
 
 	public Product(String objectId, String name, String thumbnail) {
 		super(objectId, name, thumbnail);
+		isFavor = false;
 	}
 
 	public Product(JSONObject obj) {
 		super(obj);
 	}
-
+	//Convert from DBProduct object, so isFavor is True obviously.
 	public Product(DBProduct product) {
 		super(product);
+		isFavor = true;
+	}
+
+	public boolean isFavor() {
+		return isFavor;
+	}
+
+	public void setFavor(boolean isFavor) {
+		this.isFavor = isFavor;
 	}
 }

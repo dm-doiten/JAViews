@@ -2,6 +2,7 @@ package pollcorp.iriview;
 
 import android.app.Application;
 import android.graphics.Bitmap;
+import android.provider.Settings;
 import android.util.LruCache;
 
 import com.activeandroid.ActiveAndroid;
@@ -33,6 +34,7 @@ public class MyApp extends Application {
 
 	private JSONObject detailResponse;
 	private String searchtext = "";
+	public boolean isShowSearch = true;
 
 	@Override
 	public void onCreate() {

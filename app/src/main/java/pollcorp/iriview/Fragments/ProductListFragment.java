@@ -39,6 +39,7 @@ import java.util.Map;
 
 import pollcorp.iriview.MyApp;
 import pollcorp.iriview.R;
+import pollcorp.iriview.Util.DB;
 import pollcorp.iriview.Util.RConstant;
 import pollcorp.iriview.adapters.ProductAdapter;
 import pollcorp.iriview.models.Product;
@@ -131,6 +132,7 @@ public class ProductListFragment extends Fragment implements AbsListView.OnItemC
 					for (int i = 0; i < arr.length(); i++) {
 						JSONObject obj = arr.getJSONObject(i);
 						Product product = new Product(obj);
+						product.setFavor(DB.checkIsFavor(product));
 						products.add(product);
 					}
 					Log.e(TAG, products.toString());

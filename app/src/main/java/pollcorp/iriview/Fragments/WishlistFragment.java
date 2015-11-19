@@ -6,14 +6,12 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.baoyz.swipemenulistview.SwipeMenu;
@@ -39,7 +37,7 @@ import pollcorp.iriview.models.Product;
  * with a GridView.
  * <p/>
  */
-public class BookmarkFragment extends Fragment implements AbsListView.OnItemClickListener {
+public class WishlistFragment extends Fragment implements AbsListView.OnItemClickListener {
 
 	// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 	private static final String ARG_PARAM1 = "param1";
@@ -54,8 +52,8 @@ public class BookmarkFragment extends Fragment implements AbsListView.OnItemClic
 	private SwipeMenuCreator creator;
 
 	// TODO: Rename and change types of parameters
-	public static BookmarkFragment newInstance(String param1, String param2) {
-		BookmarkFragment fragment = new BookmarkFragment();
+	public static WishlistFragment newInstance(String param1, String param2) {
+		WishlistFragment fragment = new WishlistFragment();
 		Bundle args = new Bundle();
 		args.putString(ARG_PARAM1, param1);
 		args.putString(ARG_PARAM2, param2);
@@ -67,7 +65,7 @@ public class BookmarkFragment extends Fragment implements AbsListView.OnItemClic
 	 * Mandatory empty constructor for the fragment manager to instantiate the
 	 * fragment (e.g. upon screen orientation changes).
 	 */
-	public BookmarkFragment() {
+	public WishlistFragment() {
 	}
 
 	@Override
