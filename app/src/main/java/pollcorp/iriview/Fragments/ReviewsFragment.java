@@ -123,6 +123,7 @@ public class ReviewsFragment extends Fragment implements AbsListView.OnItemClick
 		// Get the NetworkImageView that will display the image.
 		mNetworkImageView = (NetworkImageView) header.findViewById(R.id.listHeaderImage);
 		notifyDataChanged();
+		((ActionBarActivity) getActivity()).getSupportActionBar().show();
 		return view;
 	}
 

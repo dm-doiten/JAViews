@@ -108,7 +108,7 @@ public class WishlistFragment extends Fragment implements AbsListView.OnItemClic
 
 		// Set the adapter
 		mListView = (SwipeMenuListView) view.findViewById(android.R.id.list);
-		((AdapterView<ListAdapter>) mListView).setAdapter(mAdapter);
+		mListView.setAdapter(mAdapter);
 		mListView.setMenuCreator(creator);
 		// Set OnItemClickListener so we can be notified on item clicks
 		mListView.setOnItemClickListener(this);
@@ -142,7 +142,9 @@ public class WishlistFragment extends Fragment implements AbsListView.OnItemClic
 					case 0:
 						// delete
 						DB.delOne(data.get(position));
-						//TODO update view
+						//Update Home screen product list.
+						MyApp.getInstance().updateProductFromWishlist(false, data.get(position).objectId);
+						//Update wishlist view
 						data = DB.getAllProduct();
 						mAdapter = new FavoriteAdapter(getActivity(), data);
 						mListView.setAdapter(mAdapter);
@@ -182,5 +184,15 @@ public class WishlistFragment extends Fragment implements AbsListView.OnItemClic
 		}
 	}
 
+	//Refresh data here.
+	@Override
+	public void onResume() {
+		super.onResume();
+		data = DB.getAllProduct();
+		mAdapter = new FavoriteAdapter(getActivity(), data);
+		mListView.setAdapter(mAdapter);
 
+
+
+	}
 }

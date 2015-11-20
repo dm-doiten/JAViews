@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.jaredrummler.android.device.DeviceName;
 
@@ -36,6 +37,7 @@ public class HomeActivity extends ActionBarActivity
 	 * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
 	 */
 	private MyDrawerFragment mNavigationDrawerFragment;
+	private static long back_pressed;
 
 	/**
 	 * Used to store the last screen title. For use in {@link #restoreActionBar()}.
@@ -275,4 +277,13 @@ public class HomeActivity extends ActionBarActivity
 			abTitle.setTextColor(getResources().getColor(R.color.header_text));
 	}
 
+	@Override
+	public void onBackPressed() {
+		if (back_pressed + 1500 > System.currentTimeMillis()) {
+			super.onBackPressed();
+		} else {
+			Toast.makeText(getBaseContext(), "Press back twice to exit!", Toast.LENGTH_SHORT).show();
+		}
+		back_pressed = System.currentTimeMillis();
+	}
 }

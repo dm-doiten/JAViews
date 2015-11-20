@@ -27,5 +27,4 @@
               android:layout_gravity="start"
               android:name="pollcorp.iriview.Fragments.MyDrawerFragment"
               tools:layout="@layout/fragment_my_drawer"/>
-
 </android.support.v4.widget.DrawerLayout>

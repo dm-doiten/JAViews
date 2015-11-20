@@ -3,6 +3,7 @@ package pollcorp.iriview.Fragments;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -72,6 +73,7 @@ public class BenchmarkFragment extends Fragment {
 //		mChart3 = (HorizontalBarChart) view.findViewById(R.id.chart3);
 
 		setupChart(mChart1);
+		((ActionBarActivity) getActivity()).getSupportActionBar().show();
 		return view;
 	}
 

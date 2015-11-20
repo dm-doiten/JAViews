@@ -135,4 +135,16 @@ public class MyApp extends Application {
 	public String getSearchText() {
 		return this.searchtext;
 	}
+
+	//Update current product list favor state From wishlist screen.
+	public void updateProductFromWishlist(boolean isFavor, String objectId) {
+		if (products == null)
+			return;
+		int size = products.size();
+		for (int i = 0; i < size; i++)
+			if (products.get(i).getObjectId().equals(objectId)) {
+				products.get(i).setFavor(isFavor);
+				break;
+			}
+	}
 }

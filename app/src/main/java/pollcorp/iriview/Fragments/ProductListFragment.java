@@ -179,7 +179,7 @@ public class ProductListFragment extends Fragment implements AbsListView.OnItemC
 	                         Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_product, container, false);
 		mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeview_product);
-		mSwipeRefreshLayout.setEnabled(false);
+		//mSwipeRefreshLayout.setEnabled(false);
 		mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
 			@Override
 			public void onRefresh() {
@@ -191,7 +191,7 @@ public class ProductListFragment extends Fragment implements AbsListView.OnItemC
 		});
 		// Set the adapter
 		mListView = (ListView) view.findViewById(android.R.id.list);
-		mListView.setDivider(null);
+		//mListView.setDivider(null);
 		products = MyApp.getInstance().getProducts();
 		if (products.isEmpty() || products == null)
 			getProductList(0);//Load the first page
@@ -248,10 +248,12 @@ public class ProductListFragment extends Fragment implements AbsListView.OnItemC
 		});
 		return view;
 	}
-	public void removeHeaderView(){
+
+	public void removeHeaderView() {
 		if (mListView != null && header != null && mListView.getHeaderViewsCount() > 0)
 			mListView.removeHeaderView(header);
 	}
+
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);

@@ -1,5 +1,6 @@
 package pollcorp.iriview.Fragments;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -33,6 +34,7 @@ import pollcorp.iriview.MyApp;
 import pollcorp.iriview.R;
 import pollcorp.iriview.Util.DB;
 import pollcorp.iriview.Util.RConstant;
+import pollcorp.iriview.adapters.FavoriteAdapter;
 import pollcorp.iriview.dbmodels.DBProduct;
 import pollcorp.iriview.models.Product;
 
@@ -64,10 +66,10 @@ public class DetailScreen extends ActionBarActivity implements ActionBar.TabList
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_detail_screen);
 		setTitle(MyApp.getInstance().getCurName());
-
 		// Set up the action bar.
 		final ActionBar actionBar = getSupportActionBar();
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+		actionBar.setHomeButtonEnabled(true);
 
 		// Create the adapter that will return a fragment for each of the three
 		// primary sections of the activity.
@@ -161,10 +163,10 @@ public class DetailScreen extends ActionBarActivity implements ActionBar.TabList
 		Product product = MyApp.getInstance().getCurrentProduct();
 		if (product.isFavor()) {
 			favor.setIcon(R.drawable.ic_favorite_white_48dp);
-			favor.setEnabled(false);
+//			favor.setEnabled(false);
 		} else {
 			favor.setIcon(R.drawable.ic_favorite_black_24dp);
-			favor.setEnabled(true);
+//			favor.setEnabled(true);
 		}
 		return true;
 	}
@@ -172,12 +174,25 @@ public class DetailScreen extends ActionBarActivity implements ActionBar.TabList
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		int id = item.getItemId();
+		if (id == android.R.id.home) {
+			// app icon in action bar clicked; goto parent activity.
+			this.finish();
+			return true;
+		}
 		if (id == R.id.action_favorite) {
-			//update list data.
-			MyApp.getInstance().getCurrentProduct().setFavor(true);
-			DB.addProduct(new DBProduct(MyApp.getInstance().getCurrentProduct()));
-			item.setIcon(R.drawable.ic_favorite_white_48dp);
-			item.setEnabled(false);
+			Product product = MyApp.getInstance().getCurrentProduct();
+			if (product.isFavor()) {
+				//Un favor on view, then del from db.
+				product.setFavor(false);
+				item.setIcon(R.drawable.ic_favorite_black_24dp);
+				DB.delOne(new DBProduct(product));
+				product.setFavor(false);
+			} else {
+				//Favor on view, then add the db.
+				product.setFavor(true);
+				item.setIcon(R.drawable.ic_favorite_white_48dp);
+				DB.addProduct(new DBProduct(product));
+			}
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
