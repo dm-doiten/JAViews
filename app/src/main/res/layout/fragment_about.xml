@@ -1,0 +1,22 @@
+<RelativeLayout android:layout_width="fill_parent"
+                tools:context="pollcorp.iriview.Fragments.AboutFragment"
+                android:layout_height="fill_parent"
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools">
+    <TextView
+        android:layout_centerInParent="true"
+        android:textSize="20dp"
+        android:textColor="@android:color/black"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/about_text"/>
+    <Button android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Write a Review"
+            android:id="@+id/btn_review"
+            android:background="@null"
+            android:textSize="15dp"
+            android:layout_alignParentBottom="true"
+        />
+
+</RelativeLayout>

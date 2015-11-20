@@ -1,0 +1,49 @@
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <RelativeLayout
+        android:id="@+id/profile_bar"
+        android:layout_width="fill_parent"
+        android:layout_height="100dp"
+        android:background="@color/primary">
+        <Button
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:background="@null"/>
+        <pollcorp.iriview.models.RoundImage
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:id="@+id/profle_img"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:src="@drawable/default_profile"
+            android:scaleType="centerInside"
+            />
+        <TextView
+            android:textStyle="bold"
+            android:textSize="20dp"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/profile_name"
+            android:text="My Device"
+            android:textColor="@color/header_text"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/profle_img"
+            android:paddingLeft="20dp"/>
+    </RelativeLayout>
+    <ListView
+        android:id="@+id/drawer_listview"
+        android:layout_marginTop="100dp"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:choiceMode="singleChoice"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="0dp"
+        android:background="@color/bg"
+        tools:context=".MyDrawerFragment"/>
+
+</FrameLayout>
